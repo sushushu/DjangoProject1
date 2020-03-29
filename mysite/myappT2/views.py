@@ -42,8 +42,14 @@ ydl_opts = {
     'progress_hooks': [my_hook],
 }
 
-def show(request):
-    return render(request, 'show.html')
+def f_mm(request):
+    return render(request, 'f_mm.html')
+
+def f_dy(request):
+    return render(request, 'f_dy.html')
+
+def f_mooc(request):
+    return render(request, 'f_mooc.html')
 
 
 def Find(string):
@@ -105,9 +111,10 @@ RETRY = 5
 
 RESULTS_VARIATION_RETRY = 5000
 
-def get_real_address(url):
+
+def get_long_address(url):
     if url.find('v.douyin.com') < 0:
-        return url
+        return None
     res = requests.get(url, headers=HEADERS, allow_redirects=False)
     if res.status_code == 302:
         long_url = res.headers['Location']
@@ -115,10 +122,21 @@ def get_real_address(url):
         return long_url
     return None
 
-def get_html(url,headers):
-    response = requests.get(url,headers=headers)
-    print(response.text)
-    response.encoding = 'utf-8'
+def get_real_address(url):
+
+    res = requests.get(url, headers=HEADERS, allow_redirects=False)
+    if res.status_code == 302:
+        now_url = res.headers['Location']
+        HEADERS['Referer'] = now_url
+        return now_url
+    return None
+
+def get_html(url,headers = None):
+
+    if headers is None:
+        response = requests.get(url,headers = {'content-type': 'charset=utf8'})
+    else:
+        response = requests.get(url,headers=headers)
     if response.status_code == 200:
         return response.text
     return "None"
@@ -137,6 +155,11 @@ def re_get_dytk(text):
     dytk = re.sub('[dytk: ,\"]','',str(dytk.group()))
     return dytk
 
+def re_get_title(text):
+    result = re.search('(<div class="user-title">)(.*?)(</div>)', text).group()
+    name = re.sub('(<div class="user-title">|</div>)', '', result)
+    return name
+
 
 def douyin(request):
     url_str = str(request.GET.get('url', ''))
@@ -145,25 +168,36 @@ def douyin(request):
         # 尝试处理url
         url = get_url(url_str)
         print(url)
-        long_url = get_real_address(url)
+        long_url = get_long_address(url)
         html_text = get_html(long_url,HEADERS)
         ids = re_get_ids(long_url)
         dytk = re_get_dytk(html_text)
         url_2 = 'https://www.iesdouyin.com/web/api/v2/aweme/iteminfo/?item_ids='+ids+"&dytk="+dytk
-        dict["data"] = get_html(url_2,HEADERS)
-        print(url_2)
-        #print(type(dict['data']))
 
+        dict["data"] = json.loads(get_html(url_2))
+        play_addrs = dict['data']['item_list'][0]['video']['play_addr']['url_list']
+        dict['data']['real_url'] = get_real_address(play_addrs[0])
+        dict['data']['title'] = re_get_title(html_text)
+
+        #dict["data"] = url_2
 
     except BaseException as err:
         # 接收到异常，返回状态码：500  msg：错误信息 dict ：空
         dict["code"] = 500
         dict["msg"] = str(err)
         return HttpResponse(json.dumps(dict),
-                content_type="application/json,charset=utf-8")
+                content_type="application/json")
 
 
     else :
         # ok 状态码 200
         return HttpResponse(json.dumps(dict),
-                content_type="application/json,charset=utf-8")
+                content_type="application/json")
+
+
+def mooc(request):
+    str_edu_unique_id = str(request.GET.get('edu_unique_id', ''))
+    str_mob_token = str(request.GET.get('mob_token', ''))
+
+
+    return HttpResponse(json.dumps(dict))

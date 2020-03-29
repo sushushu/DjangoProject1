@@ -23,8 +23,9 @@ from myappT2 import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1',views.show),
-    path('miaomiao', views.miaomiao),
+    path('api/v1/mm',views.f_mm),
+    path('api/v1/mooc',views.f_mooc),
+    path('api/v1/douyin', views.f_dy),
     path('douyin', views.douyin),
     path('miaomiao', views.miaomiao),
 
