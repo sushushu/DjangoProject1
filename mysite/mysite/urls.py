@@ -28,7 +28,7 @@ urlpatterns = [
     path('api/v1/douyin', views.f_dy),
     path('douyin', views.douyin),
     path('miaomiao', views.miaomiao),
-
+    path('mooc', views.mooc),
 
     # (?P<key> value ) P 大写！！！
     re_path(r'^t1/(?P<page>[0-9]{4})/$',views.t1_view)
