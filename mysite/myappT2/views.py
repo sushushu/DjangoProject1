@@ -196,8 +196,11 @@ def douyin(request):
 
 
 def mooc(request):
+    dict = {}
     str_edu_unique_id = str(request.GET.get('edu_unique_id', ''))
     str_mob_token = str(request.GET.get('mob_token', ''))
+    dict['edu_unique_id'] = str_edu_unique_id
+    dict['mob_token'] = str_mob_token
 
 
     return HttpResponse(json.dumps(dict))
