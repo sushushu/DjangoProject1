@@ -1,0 +1,10 @@
+1，get_url（url） 正则匹配获取获取连接
+
+2，get_long_address(url)，用抖音链接找长链。原理是：判断status_code是否等于302，然后再拿‘Location’字段放到HEADERS的‘Referer’里面。
+
+3，re_get_ids（url）正则找ids字段的值
+
+4，re_get_dytk（text），正则找dytk字段的值
+
+5，finalUrl = 'https://www.iesdouyin.com/web/api/v2/aweme/iteminfo/?item_ids='+ids+"&dytk="+dytk  , 把3 4的值拼接到一起再发一个get请求就可以获得抖音返回的接口数据。视频直链、封面、Gif标题都在里面。
+
