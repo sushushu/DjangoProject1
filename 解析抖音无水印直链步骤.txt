@@ -8,3 +8,5 @@
 
 5，finalUrl = 'https://www.iesdouyin.com/web/api/v2/aweme/iteminfo/?item_ids='+ids+"&dytk="+dytk  , 把3 4的值拼接到一起再发一个get请求就可以获得抖音返回的接口数据。视频直链、封面、Gif标题都在里面。
 
+6，将视频直链中的playwn 替换为play即为无水印的视屏链接
+
